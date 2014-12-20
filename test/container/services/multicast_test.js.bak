@@ -3,13 +3,13 @@ var Q = require('q');
 module.exports = function() {
     var route = this.from('direct:in?exchangePattern=inOut')
         .multicast()
-            .to(function(exchange) {
-                exchange.header('satu', 1);
-                return exchange;
+            .to(function(message) {
+                message.header('satu', 1);
+                return message;
             })
-            .to(function(exchange) {
-                exchange.header('dua', 2);
-                return exchange;
+            .to(function(message) {
+                message.header('dua', 2);
+                return message;
             })
         .end()
         .to(function() {
@@ -21,8 +21,8 @@ module.exports = function() {
     var template = this.createProducerTemplate();
 
     setImmediate(function() {
-        template.send('direct:in', 'one').then(function(exchange) {
-            console.log(exchange + '');
+        template.send('direct:in', 'one').then(function(message) {
+            console.log(message + '');
         });
         // template.send('direct:in', 'two');
         // template.send('direct:in', 'three');

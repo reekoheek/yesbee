@@ -4,25 +4,25 @@ module.exports = function() {
     // var route = this.from('direct:in')
     //     .to('direct:preprocess?')
     //     .choice()
-    //         .when(function(exchange) { return exchange.body == 'one'; } )
+    //         .when(function(message) { return message.body == 'one'; } )
     //             .to('direct:one?exchangePattern=inOut')
-    //             .to(function(exchange) {
+    //             .to(function(message) {
     //                 var deferred = Q.defer();
     //                 setTimeout(function() {
     //                     console.log('------------------------------------------------');
-    //                     exchange.body = 'nonono-1';
-    //                     deferred.resolve(exchange);
+    //                     message.body = 'nonono-1';
+    //                     deferred.resolve(message);
     //                 }, 1000);
     //                 return deferred.promise;
     //             })
-    //         .when(function(exchange) { return exchange.body == 'two'; } )
+    //         .when(function(message) { return message.body == 'two'; } )
     //             .to('direct:two')
-    //             .to(function(exchange) {
+    //             .to(function(message) {
     //                 var deferred = Q.defer();
     //                 setTimeout(function() {
     //                     console.log('------------------------------------------------');
-    //                     exchange.body = 'nonono-2';
-    //                     deferred.resolve(exchange);
+    //                     message.body = 'nonono-2';
+    //                     deferred.resolve(message);
     //                 }, 1000);
     //                 return deferred.promise;
     //             })
@@ -32,18 +32,18 @@ module.exports = function() {
 
     var route = this.from('direct:in')
         .choice()
-            .when(function(exchange) { return exchange.body == 'one'; } )
-                .to(function(exchange) {
-                    exchange.body = 'satu';
+            .when(function(message) { return message.body == 'one'; } )
+                .to(function(message) {
+                    message.body = 'satu';
                 })
-            .when(function(exchange) { return exchange.body == 'two'; } )
+            .when(function(message) { return message.body == 'two'; } )
                 .to('direct:two')
-                // .to(function(exchange) {
-                //     exchange.body = 'dua';
+                // .to(function(message) {
+                //     message.body = 'dua';
                 // })
             .otherwise()
-                .to(function(exchange) {
-                    exchange.body = 'other';
+                .to(function(message) {
+                    message.body = 'other';
                 })
         .end()
         .to(function() {
@@ -51,8 +51,8 @@ module.exports = function() {
         });
 
     this.from('direct:two?exchangePattern=inOut')
-        .to(function(exchange) {
-            exchange.body = 'dua';
+        .to(function(message) {
+            message.body = 'dua';
         });
 
     this.trace = true;

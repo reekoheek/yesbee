@@ -1,0 +1,206 @@
+/**
+ * yesbee test/channel_test
+ *
+ * MIT LICENSE
+ *
+ * Copyright (c) 2014 PT Sagara Xinix Solusitama - Xinix Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Ganesha <reekoheek@gmail.com>
+ * @copyright  2014 PT Sagara Xinix Solusitama
+ */
+
+var assert = require('assert');
+
+module.exports = function(yesbee) {
+    "use strict";
+
+    var Channel = yesbee.require('channel');
+
+    this.on('started', function() {
+        this.test(function(suite) {
+            suite.describe('Channel', function() {
+                suite.describe('#send()', function() {
+                    suite.it('should throw error on sending wildcarded uri *', function() {
+                        var channel = new Channel();
+                        assert.throws(function() {
+                            channel.send('/test/*');
+                        });
+                    });
+
+                    suite.it('should throw error on sending wildcarded uri #', function() {
+                        var channel = new Channel();
+                        assert.throws(function() {
+                            channel.send('/test/#');
+                        });
+                    });
+
+                });
+
+                suite.describe('#receive()', function() {
+                    suite.describe('queue', function() {
+                        var channel = new Channel(),
+                            MAX_NUM = 10,
+                            receiver1 = 0,
+                            receiver2 = 0;
+
+                        suite.before(function(done) {
+                            channel.receive('/topic/queue', function(message) {
+                                receiver1++;
+
+                                if (receiver1 + receiver2 === MAX_NUM) {
+                                    done();
+                                }
+                            });
+
+                            channel.receive('/topic/queue', function(message) {
+                                receiver2++;
+
+                                if (receiver1 + receiver2 === MAX_NUM) {
+                                    done();
+                                }
+                            });
+
+                            var i = MAX_NUM;
+                            var send_ = function() {
+                                if (i-- <= 0) return;
+                                var message = 'hello ' + new Date();
+                                channel.send('/topic/queue', message);
+                                setImmediate(send_);
+                            };
+                            send_();
+                        });
+
+                        suite.it('should load balancing result to receivers', function() {
+                            assert(Math.abs(receiver1 - receiver2) <= 1);
+                        });
+                    });
+
+                    suite.describe('topic', function() {
+                        suite.describe('wildcard #', function() {
+                            var channel = new Channel(),
+                                ordersJkt = 0,
+                                ordersBdg = 0,
+                                orders = 0;
+
+
+                            suite.before(function(done) {
+                                var hits = 0;
+                                channel.receive('/orders/jkt/#', function() {
+                                    ordersJkt++;
+                                });
+
+                                channel.receive('/orders/bdg/#', function(a) {
+                                    ordersBdg++;
+                                });
+
+                                channel.receive('/orders/#', function() {
+                                    orders++;
+                                    hits++;
+                                    if (hits >= 4) done();
+                                });
+
+                                channel.send('/orders/jkt/1');
+                                channel.send('/orders/bdg/1');
+                                channel.send('/orders/jkt/2');
+                                channel.send('/orders/sby/1');
+                            });
+
+                            suite.it('should accept two orders for jkt', function() {
+                                assert.equal(ordersJkt, 2);
+                            });
+
+                            suite.it('should accept one order for bdg', function() {
+                                assert.equal(ordersBdg, 1);
+                            });
+
+                            suite.it('should accept four orders', function() {
+                                assert.equal(orders, 4);
+                            });
+
+                        });
+
+                        suite.describe('wildcard *', function() {
+                            var channel = new Channel(),
+                                orange = 0,
+                                rabbit = 0,
+                                wrongRabbit = 0;
+
+                            suite.before(function(done) {
+                                channel.receive('/*/orange/*', function() {
+                                    orange++;
+                                });
+                                channel.receive('/*/*/rabbit', function() {
+                                    rabbit++;
+                                });
+                                channel.receive('/*/rabbit', function() {
+                                    wrongRabbit++;
+                                });
+                                channel.receive('/#', function() {
+                                    done();
+                                });
+
+                                channel.send('/quick/orange/rabbit', 'test');
+                            });
+
+                            suite.it('should be ok', function() {
+                                assert.equal(orange, 1);
+                                assert.equal(rabbit, 1);
+                                assert.equal(wrongRabbit, 0);
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    // var counter = 0,
+    //     running = true,
+    //     startTime;
+
+
+    // this.on('started', function() {
+    //     startTime = process.hrtime();
+    //     console.time('test');
+    //     try {
+    //         setImmediate(function a() {
+    //             producer.send('channel-producer-consumer', 'anu ' + new Date());
+    //             if (running) {
+    //                 setImmediate(a);
+    //             }
+    //         });
+    //     } catch(e) {
+    //         yesbee.logger().error(e.message, e);
+    //     }
+    // });
+
+    // this.on('stopped', function() {
+    //     running = false;
+
+    //     setImmediate(function() {
+    //         console.timeEnd('test');
+    //         var diff = process.hrtime(startTime);
+    //         console.log('benchmark took %d nanoseconds', diff[0] * 1e9 + diff[1]);
+    //         console.log('processed: %s elapsed: %s rate %s doc/s', counter, diff, counter/diff[0]);
+    //     });
+    // });
+};

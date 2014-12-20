@@ -1,5 +1,5 @@
 /**
- * yesbee components/processor
+ * yesbee test/messenger
  *
  * MIT LICENSE
  *
@@ -27,6 +27,39 @@
  * @author     Ganesha <reekoheek@gmail.com>
  * @copyright  2014 PT Sagara Xinix Solusitama
  */
-module.exports = function(yesbee) {
-    // noop
-};
+
+var assert = require('assert'),
+    Messenger = require('../lib/messenger');
+
+describe('Messenger', function() {
+    "use strict";
+
+    var messenger = new Messenger();
+
+    describe('constructor', function() {
+        it('should return Messenger instance', function() {
+            assert(messenger instanceof Messenger);
+        });
+    });
+
+    describe('#send()', function() {
+        it('should be able to send', function() {
+            messenger.send('/anu/aja', 'time:' + new Date());
+        });
+
+    });
+
+    describe('#receive()', function() {
+        var inMessage;
+        before(function(done) {
+            messenger.receive('/anu/aja', function(message) {
+                inMessage = message;
+                done();
+            });
+        });
+
+        it('should be able to receive', function() {
+            assert(inMessage);
+        });
+    });
+});

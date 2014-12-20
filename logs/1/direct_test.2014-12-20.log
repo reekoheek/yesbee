@@ -1,0 +1,19 @@
+2014-12-20T07:48:09.334Z - error: ProcessError: uri is not defined
+2014-12-20T07:48:16.361Z - error: ProcessError: uri is not defined
+2014-12-20T07:48:45.361Z - error: ProcessError: uri is not defined
+2014-12-20T07:49:34.431Z - error: ProcessError: uri is not defined
+2014-12-20T07:49:47.476Z - error: ProcessError: uri is not defined
+2014-12-20T07:50:05.449Z - error: ProcessError: Object [Component#P direct:anu] has no method 'send'
+2014-12-20T07:50:15.532Z - error: ProcessError: Object [Component#P direct:anu] has no method 'send'
+2014-12-20T07:51:08.523Z - error: ProcessError: Object [Component#P direct:anu] has no method 'send'
+2014-12-20T07:51:12.570Z - error: ProcessError: Object [Component#P direct:anu] has no method 'send'
+2014-12-20T07:51:46.688Z - error: ProcessError: Cannot consume from non-source component
+2014-12-20T07:51:56.673Z - error: ProcessError: Cannot consume from non-source component
+2014-12-20T07:55:14.836Z - error: ProcessError: uri is not defined
+2014-12-20T07:55:45.804Z - error: ProcessError: uri is not defined
+2014-12-20T07:55:50.812Z - error: ProcessError: uri is not defined
+2014-12-20T07:56:16.849Z - error: ProcessError: uri is not defined
+2014-12-20T07:56:42.993Z - error: ProcessError: Cannot consume from non-source component
+2014-12-20T07:56:54.981Z - error: ProcessError: Cannot consume from non-source component
+2014-12-20T07:57:02.998Z - error: ProcessError: Cannot consume from non-source component
+2014-12-20T09:34:56.157Z - error: ProcessError: Object [Component#P direct:anu] has no method 'getProducer'
