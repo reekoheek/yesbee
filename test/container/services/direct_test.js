@@ -39,6 +39,7 @@ module.exports = function(yesbee) {
     this.from('direct:testEcho?exchangePattern=inOut')
         .to(function dua(message, resolve) {
             setTimeout(function() {
+                // console.log('direct_test timeout');
                 resolve(message);
             });
         });

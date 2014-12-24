@@ -33,7 +33,7 @@ Legend:
 - [ ] component dependency resolver
 - [ ] worker-aware context 
         cli should invoke context.start and lets the context.start propagate to other workers
-- [ ] 
+- [ ] synchronize run between worker, if there are more than 1 broker, sync run will make sure there will be only ONE to be ran
 
 a -> b'
 
@@ -58,8 +58,25 @@ out:a
   id: 1
   
 
+message: 
+  #1: address: queue://foo/anu
+  #2: address: /anu
+  #3: address: /anu
+
+exchange:
+  foo
 
 
+foo
+  foo/1
+  foo/2
 
 
+bar
+  bar/1
+  bar/2
+  bar/3
 
+baz
+  baz/1
+  baz/2
